@@ -1,0 +1,42 @@
+CREATE TABLE pub
+(cod_pub CHAR(10) NOT NULL CONSTRAINT pub_PK PRIMARY KEY,
+ nombre VARCHAR(35) NOT NULL,
+ licencia_fiscal CHAR(15) NOT NULL,
+ domicilio VARCHAR(50),
+ fecha_apertura DATE NOT NULL,
+ horario CHAR(4) NOT NULL CONSTRAINT horario_pub CHECK(horario='HOR1' OR horario='HOR2' OR horario='HOR3'),
+ cod_localidad NUMBER(10) CONSTRAINT pub_FK REFERENCES localidad ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE titular
+(dni_titular CHAR(9) NOT NULL CONSTRAINT tl_PK PRIMARY KEY,
+ nombre VARCHAR(35) NOT NULL,
+ domicilio VARCHAR(50),
+ cod_pub CHAR(10) CONSTRAINT tl_FK REFERENCES pub ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE empleado
+(dni_empleado CHAR(9) NOT NULL CONSTRAINT emp_PK PRIMARY KEY,
+ nombre VARCHAR(35) NOT NULL,
+ domicilio VARCHAR(50)
+);
+
+CREATE TABLE existencias
+(cod_articulo CHAR(10) NOT NULL CONSTRAINT ex_PK PRIMARY KEY,
+ nombre VARCHAR(15) NOT NULL,
+ cantidad NUMBER(3) DEFAULT 1,
+ precio NUMBER(4,2) DEFAULT 1,
+ cod_pub CHAR(10) CONSTRAINT ex_FK REFERENCES pub ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE localidad
+(cod_localidad NUMBER(10) NOT NULL CONSTRAINT loc_PK PRIMARY KEY,
+ nombre VARCHAR(40) NOT NULL
+);
+
+CREATE TABLE pub_empleado
+(cod_pub CHAR(10) CONSTRAINT pubemp_FK REFERENCES pub ON DELETE CASCADE ON UPDATE CASCADE ,
+ dni_empleado CHAR(9) CONSTRAINT pubemp_FK2 REFERENCES empleado ON DELETE CASCADE ON UPDATE CASCADE,
+ funcion VARCHAR(10) CONSTRAINT f_emp CHECK(funcion="seguridad" OR funcion="camarero" OR funcion="limpieza"),
+ CONSTRAINT pubemp_PK PRIMARY KEY (cod_pub,dni_empleado,funcion)
+);
